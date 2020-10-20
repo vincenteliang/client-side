@@ -114,6 +114,126 @@ document.title = 'lison'
 
 ## 02. 基础类型
 
+### 布尔类型
+
+```ts ./src/example/basic-type.ts
+let bool: boolean = true
+```
+
+### 数值类型
+
+```ts ./src/example/basic-type.ts
+let num: number = 123
+num = 0b1111011
+num = 0o173
+num = 0x7b
+```
+
+数值类型支持2/8/10/16四种进制
+
+### 字符串类型
+
+```ts ./src/example/basic-type.ts
+let str: string = 'abc'
+str = `数值是${num}`
+```
+
+### 数组类型
+
+```ts ./src/example/basic-type.ts
+let arr0: number[] = [5]
+let arr1: Array<string> = ['a']
+let arr2: (string | number)[] = [5, 'a']
+let arr3: Array<string | number> = [5, 'a']
+```
+
+### 元组类型
+
+```ts ./src/example/basic-type.ts
+let tuple: [string, number, boolean]
+tuple = ['a', 1, false]
+```
+
+版本2.6以前元组的越界元素可以是元组中指定元素之一
+2.6以后则不允许出现越界元素
+
+### 枚举类型
+
+```ts ./src/example/basic-type.ts
+enum Roles {
+    SUPER_ADMIN,
+    ADMIN = 4,
+    USER
+}
+```
+
+### any类型
+
+```ts ./src/example/basic-type.ts
+let value: any
+const arr: any[] = [1,'a']
+```
+
+### void类型
+
+```ts ./src/example/basic-type.ts
+const consoleText = (text: string): void => {
+    console.log(text)
+}
+let v: void
+v = undefined
+v = null
+consoleText('abc')
+```
+
+将`null`赋给`void`类型需要修改配置文件
+
+### null和undefined类型
+
+```ts ./src/example/basic-type.ts
+let u: undefined = undefined
+let n: null = null
+```
+
+null和undefined是其他类型的子类型，非严格情况可以赋给其他类型
+
+### never类型
+
+```ts ./src/example/basic-type.ts
+const errorFunc = (message: string): never => {
+    throw new Error(message)
+}
+const infiniteFunc = (): never => {
+    while(true){}
+}
+```
+
+never是任何类型的子类型
+
+### object类型
+
+对象类型存储的是内存中的地址
+
+```ts ./src/example/basic-type.ts
+function getObject(obj: object): void {
+    console.log(obj)
+}
+```
+
+### 类型断言
+
+```ts ./src/example/basic-type.ts
+const getLength = (target: string | number): number => {
+    if ((<string>target).length || (target as string).length === 0) {
+        return (<string>target).length
+    } else {
+        return target.toString().length
+    }
+}
+```
+
+使用jsx时推荐使用`as`关键字
+
 ## 03. Symbol
 
 ## 04. 接口
