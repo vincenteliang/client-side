@@ -1,9 +1,11 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const CleanWebpackPlugin = require('clean-webpack-plugin')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const path = require('path');
 
 module.exports = {
     entry: "./src/index.ts",
     output: {
+        path: path.resolve(process.cwd(), 'dist'),
         filename: "main.js"
     },
     resolve: {

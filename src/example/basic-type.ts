@@ -56,7 +56,7 @@ const consoleText = (text: string): void => {
 }
 let v: void
 v = undefined
-v = null
+// v = null
 consoleText('abc')
 
 // null和undefined
@@ -67,8 +67,8 @@ let n: null
 n = null
 // n = 'abc'
 
-num = undefined
-num = null
+// num = undefined
+// num = null
 
 // never类型
 const errorFunc = (message: string): never => {

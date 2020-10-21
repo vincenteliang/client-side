@@ -2,9 +2,10 @@
 
 > 《TypeScript完全解读》项目仓库
 
-## 01. 开发环境搭建
+## 01. 开发环境搭建npm
 
-创建项目文件夹并初始化
+### 创建项目文件夹并初始化
+
 ```shell
 mkdir client-side
 cd client-side
@@ -22,7 +23,8 @@ npm初始化流程：
 - **author**: lison<lison16new@163.com>
 - **license**: MIT
 
-创建文件目录
+### 创建文件目录
+
 ```shell
 .
 ├── LICENSE
@@ -42,7 +44,8 @@ npm初始化流程：
 └── typings  # ts模块声明文件
 ```
 
-安装依赖
+### 安装依赖
+
 ```shell
 sudo npm install typescript tslint -g
 tsc --init
@@ -53,7 +56,8 @@ npm install clean-webpack-plugin html-webpack-plugin -D
 npm install typescript
 ```
 
-webpack配置
+### webpack配置
+
 ```js ./uild/webpack.config.js
 //清理文件插件
 const HtmlWebpackPlugin = require('html-webpack-plugin')
@@ -105,11 +109,40 @@ module.exports = {
 },
 ```
 
-简单的编辑一下index.ts
+### 简单的编辑一下index.ts
+
 ```ts ./src/index.ts
 let num: number = 123
 
 document.title = 'lison'
+```
+
+`npm start`项目运行起来以后应该可以看到标签页标题为'lison'
+
+### 订正
+
+> 参考：<https://www.npmjs.com/package/clean-webpack-plugin>
+
+在后面实际运行时候发现了一些问题，不知是否是因为webpack相关包版本问题，项目启动过程中出现了一些问题。
+
+首先是`Error: Cannot find module 'webpack/bin/config-yargs'`，我在其他项目的webpack-cli包文件中拷贝了一份config文件夹过来。
+
+其次是`TypeError: CleanWebpackPlugin is not a constructor`，需要修改引入方式为`const { CleanWebpackPlugin } = require('clean-webpack-plugin');`。
+
+最后是`clean-webpack-plugin: options.output.path not defined. Plugin disabled...`，这个问题不影响项目启动，但可以通过配置weibpack来解决，如下：
+
+```js ./build/webpack/config.js
+-const CleanWebpackPlugin = require('clean-webpack-plugin')
++const { CleanWebpackPlugin } = require('clean-webpack-plugin')
++const path = require('path');
+
+module.exports = {
+    entry: "./src/index.ts",
+    output: {
++        path: path.resolve(process.cwd(), 'dist'),
+        filename: "main.js"
+    },
+    ...
 ```
 
 ## 02. 基础类型
@@ -235,6 +268,14 @@ const getLength = (target: string | number): number => {
 使用jsx时推荐使用`as`关键字
 
 ## 03. Symbol
+
+> TS对Symbol的支持是基于ES6的
+
+基础
+作为属性名
+属性名的遍历
+Symbol.for和Symbol.keyFor
+11个内置Symbol值
 
 ## 04. 接口
 
