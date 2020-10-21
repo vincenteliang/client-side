@@ -131,7 +131,7 @@ document.title = 'lison'
 
 最后是`clean-webpack-plugin: options.output.path not defined. Plugin disabled...`，这个问题不影响项目启动，但可以通过配置weibpack来解决，如下：
 
-```js ./build/webpack/config.js
+```diff ./build/webpack/config.js
 -const CleanWebpackPlugin = require('clean-webpack-plugin')
 +const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 +const path = require('path');
@@ -139,7 +139,7 @@ document.title = 'lison'
 module.exports = {
     entry: "./src/index.ts",
     output: {
-+        path: path.resolve(process.cwd(), 'dist'),
++       path: path.resolve(process.cwd(), 'dist'),
         filename: "main.js"
     },
     ...
