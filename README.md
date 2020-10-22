@@ -271,11 +271,74 @@ const getLength = (target: string | number): number => {
 
 > TS对Symbol的支持是基于ES6的
 
-基础
-作为属性名
-属性名的遍历
-Symbol.for和Symbol.keyFor
-11个内置Symbol值
+### 基础
+
+```ts
+// Symbol不用new关键字，使用构造函数创建
+const s1 = Symbol()
+// 在构造Symbol的时候可以传入一个标识，必须是字符串
+const s2 = Symbol('lison')
+// Symbol的值是独一无二的，下式永远返回`false`
+console.log(s1 === s2)
+```
+
+symbol类型可以转换为字符串或布尔值
+```ts
+console.log(s1.toString())
+console.log(Boolean(s1))
+console.log(!s1)  // 隐式转换后取反
+```
+
+### 作为属性名
+
+因为Symbol的值是独一无二的，所以不会被覆盖
+
+```ts
+const s = Symbol('name')
+const info = {
+    [s]: 'lison',
+    age: 18
+}
+// 不能用.操作符访问
+info[s] = 'haha'
+```
+
+### 属性名的遍历
+
+```ts
+Object.keys(info)                   // ["age"]
+Object.getOwnPropertyNames(info)    // ["age"]
+JSON.stringify(info)                // {"age":18}
+Object.getOwnPropertySymbols(info)  // [Symbol(name)]
+Reflect.ownKeys(info)               // ["age", Symbol(name)]
+```
+
+### Symbol.for和Symbol.keyFor
+
+```ts
+// 传入参数相同时.for会将原变量赋给新变量
+const s1 = Symbol.for('lison')
+const s2 = Symbol.for('lison')  // s2 = s1
+s1 === s2   // true
+
+// .keyFor只能返回.for创建的Symbol的参数
+Symbol.keyFor(s)    // undefined
+Symbol.keyFor(s1)   // lison
+```
+
+### 11个内置Symbol值(略)
+
+1. hasInstance
+2. isConcatSpreadable
+3. species
+4. match
+5. replace
+6. search
+7. split
+8. iterator
+9. toPrimitive
+10. toStringTag
+11. unscopables
 
 ## 04. 接口
 
