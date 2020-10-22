@@ -342,6 +342,166 @@ Symbol.keyFor(s1)   // lison
 
 ## 04. 接口
 
+`tslint --init` 初始化tslint配置文件 ./tslint.json
+本节关闭了部分tslint代码风格检查设置，具体可查看上述文件
+
+### 基本用法
+
+```ts
+// 定义接口数据格式
+interface NameInfo {
+    firstName: string,
+    lastName: string
+}
+
+// 使用接口规范传参格式
+// 括号内也可写成({ firstName, lastName }: { firstName: string, lastName: string })
+// 括号后的(): string表示函数返回数据的类型
+const getFullName = ({ firstName, lastName }: NameInfo): string => {
+    return `${firstName} ${lastName}`
+}
+
+// 若传入非字符串tslint会报错
+getFullName({
+    firstName: 'haha',
+    lastName: 'li',
+})
+```
+
+### 可选属性
+
+```ts
+interface Vegetable {
+    color?: string,  // 加?设置为可选属性
+    type: string,
+}
+
+const getVegetables = ({ color, type }: Vegetable) => {
+    return `A ${color ? (color + ' ') : ''}${type}`
+}
+
+getVegetables({
+    type: 'tomato'
+})
+```
+
+### 多余属性
+
+#### 类型断言
+
+```ts
+getVegetables = {
+    type: 'tomato',
+    color: 'red',
+    size: 2,
+} as Vegetable
+```
+
+#### 索引签名
+
+```ts
+interface Vegetable {
+    color?: string,  // 加?设置为可选属性
+    type: string,
+    [prop: string]: any
+}
+```
+
+#### 类型兼容性
+
+```ts
+const vegetableInfo = {
+    type: 'tomato',
+    color: 'red',
+    size: 2,
+}
+
+// a = b : 只要a需要的属性b都有即可
+getVegetables(vegetableInfo)
+```
+
+### 只读
+
+```ts
+interface Vegetable {
+    color?: string,  // 加?设置为可选属性
+    readonly type: string,
+}
+
+interface ArrInter {
+    0: number,
+    readonly 1: string
+}
+
+let arr: ArrInter = [1, 'a']
+// arr[1] = 'b'   // 报错
+```
+
+### 函数形式接口
+
+```ts
+interface AddFunc {
+    (num1: number, num2: number): number
+}
+// 以上代码会被eslint优化为如下定义类型别名的风格
+type AddFunc = (num1: number, num2: number) => number
+const add: AddFunc = (n1, n2) => n1 + n2
+```
+
+### 索引类型
+
+```ts
+interface RoleDic {
+    [id: string]: string
+}
+const role1: RoleDic = {
+    0: 'super_admin', // 0会被js默认转换为字符串
+}
+```
+
+### 接口继承
+
+```ts
+interface Vegetables {
+    color: string
+}
+interface Tomato extends Vegetables {
+    radius: number
+}
+interface Carrot extends Vegetables {
+    length: number
+}
+const tomato: Tomato = {
+    radius: 1,
+    color: 'red',
+}
+const carrot: Carrot = {
+    length: 2,
+    color: 'orange',
+}
+```
+
+### 混合类型接口
+
+```ts
+interface Counter {
+    (): void,
+    count: number
+}
+
+const getCounter = (): Counter => {
+    const c = () => { c.count++ }
+    c.count = 0
+    return c
+}
+
+const counter: Counter = getCounter()
+
+counter()  // 1
+counter()  // 2
+counter()  // 3
+```
+
 ## 05. 函数
 
 ## 06. 泛型
