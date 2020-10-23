@@ -504,6 +504,112 @@ counter()  // 3
 
 ## 05. 函数
 
+```ts
+// ES5以前的写法
+function add(arg1: number, arg2: number): number {
+    return arg1 + arg2
+}
+// ES6箭头函数
+const add = (arg1: number, arg2: number) => arg1 + arg2
+```
+
+### 函数类型
+
+#### 为函数定义类型
+
+```ts
+// 输入两个number类型并返回number类型
+let add: (x: number, y: number) => number
+```
+
+#### 完整的函数类型
+
+```ts
+// 标准的函数调用，返回值类型也可以不指定
+add = (arg1: number, arg2: number): number => arg1 + arg2
+```
+
+#### 使用接口定义函数类型
+
+```ts
+// 以下代码会被优化为类型别名的形式
+interface Add {
+    (num1: number, num2: number): number
+}
+```
+
+#### 使用类型别名
+
+```ts
+// 使用类型别名定义函数
+type Add = (x: number, y: number) => number
+```
+
+### 参数
+
+#### 可选参数
+
+ts中可选参数必须在必选参数后面
+
+```ts
+type AddFunction = (arg1: number, arg2: number, arg3?: number) => number
+let addFunction: AddFunction
+addFunction = (x: number, y: number) => x + y
+addFunction = (x: number, y: number, z: number) => x + y + z
+```
+
+#### 默认参数
+
+```ts
+// ES5以前默认参数的写法
+var addFuncions = function (x, y) {
+    y = y || 0
+    return x + y
+}
+// ES6
+let addFunction = (x, y = 3) => x + y
+// TS会识别y默认值的类型
+let addFunction = (x: number, y = 3) => x + y
+```
+
+#### 剩余参数
+
+```js
+// ES5
+function handleData () {
+    if (arguments.length === 1)
+        return arguments[0] * 2
+    else if (arguments.length === 2)
+        return arguments[0] * arguments[1]
+    else
+        return Array.prototype.slice.apply(arguments).join('_')
+}
+// ES6
+const handleData = (...args) => {
+    console.log(args)
+}
+// TS
+const handleData = (arg1: number, ...args: number[]) => {
+    // ...
+}
+```
+
+### 重载
+
+```ts
+function handleData(x: string): string[]    // 函数重载，单独存在会报错
+function handleData(x: number): number[]    // 只能用function关键字定义
+function handleData(x: any): any {          // 函数实体
+    if (typeof x === 'string') {
+        return x.split('')
+    } else {
+        return x.toString().split('').map((item) => Number(item))
+    }
+}
+handleData('abc')   // ["a", "b", "c"]
+handleData(123)     // [1, 2, 3]
+```
+
 ## 06. 泛型
 
 ## 07. ES6精讲-类(基础)
