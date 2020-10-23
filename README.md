@@ -612,6 +612,94 @@ handleData(123)     // [1, 2, 3]
 
 ## 06. 泛型
 
+### 简单使用
+
+```ts
+// 不使用范型，丢失类型检查的功能
+const getArray = (value: any, times: number = 5): any => {
+    return new Array(times).fill(value)
+}
+// 以下代码不会报错，但会返回undefined
+getArray(123, 4).map((item) => item.length)
+
+// 使用范型
+const getArray = <T>(value: T, times: number = 5): T[] => {
+    return new Array(times).fill(value)
+}
+// 报错
+getArray<number>(123, 4).map((item) => item.length)
+```
+
+### 泛型变量
+
+```ts
+const getArray = <T, U>(param1: T, param2: U, times: number): Array<[T, U]> => {
+    return new Array(times).fill([param1, param2])
+}
+
+getArray<number, string>(1, 'a', 3).forEach((item) => {
+    console.log(item[0])
+    console.log(item[1])
+})
+```
+
+### 泛型类型
+
+```ts
+// 不使用范型类型
+let getArray: <T>(arg: T, times: number) => T[]
+getArray = (arg: any, times: number) => {
+    return new Array(times).fill(arg)
+}
+
+// 使用类型别名
+type GetArray = <T>(arg: T, times: number) => T[]
+// 使用接口
+interface GetArray {
+    <T>(arg: T, times: number): T[]
+}
+// 范型变量写在外面可以全局使用
+interface GetArray<T> {
+    (arg: T, times: number): T[],
+    array: T[]
+}
+
+let getArray: GetArray = (arg: any, times: number) => {
+    return new Array(times).fill(arg)
+}
+```
+
+### 泛型约束
+
+```ts
+interface ValueWithLength {
+    length: number
+}
+
+const getArray = <T extends ValueWithLength>(arg: T, times): T[] => {
+    return new Array(times).fill(arg)
+}
+getArray([1, 2], 3)
+getArray('123', 3)
+getArray({
+    length: 2,
+}, 3)
+```
+
+### 在泛型约束中使用类型参数
+
+```ts
+const getProps = <T, K extends keyof T>(object: T, propName: K) => {
+    return object[propName]
+}
+const objs = {
+    a: 'a',
+    b: 'b',
+}
+getProps(objs, 'a')
+getProps(objs, 'c')  // 报错
+```
+
 ## 07. ES6精讲-类(基础)
 
 ## 08. ES6精讲-类(基础)
