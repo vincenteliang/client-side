@@ -702,6 +702,201 @@ getProps(objs, 'c')  // 报错
 
 ## 07. ES6精讲-类(基础)
 
+### ES5实现创建实例
+
+```ts
+// 构造函数
+function Point(x, y) {
+    this.x = x;
+    this.y = y;
+}
+Point.prototype.getPostion = function () {
+    return '(' + this.x + ', ' + this.y + ')'
+}
+// 创建空对象并赋x、y值，之后赋值给p
+var p = new Point(2, 3)
+p.getPostion()  // 返回：(2, 3)
+```
+
+### constructor方法
+
+```ts
+class Point {
+    constructor (x, y) {
+        this.x = x;
+        this.y = y;
+        // return { a: 'a' }
+    }
+    getPostion () {
+        return `(${this.x}, ${this.y})`
+    }
+}
+```
+
+### 类的实例
+
+```ts
+const p = Point(2, 3)  // ES6不用new也可以创建实例
+p1.hasOwnProperty('x')  // true
+p1.hasOwnProperty('getPostion')  // false
+p1.__proto__.hasOwnProperty('getPostion')  // true
+```
+
+### 取值函数和存值函数
+
+```ts
+var info = {
+    _age: 18,
+    // 存值器，赋值时会被自动调用
+    set age (newValue) {
+        if (newValue > 18) {
+            console.log('怎么变老了')
+        } else {
+            console.log('哈哈我还年轻')
+        }
+    },
+    // 取值器，访问时会被自动调用
+    get age () {
+        console.log('你问我年龄干嘛')
+        return this._age
+    }
+}
+info.age = 17;  // console输出'哈哈我还年轻'
+```
+
+### class表达式
+
+```ts
+// 定义函数的两种方式
+const func1 = function () {}
+function func2 () {}
+
+// 定义类的三种方式
+class Infos1 {
+    constructor () {}
+}
+const Infos2 = class c {  // 类名为Infos，不是c
+    constructor () {}
+}
+const Infos3 = class {
+    constructor () {}
+}
+```
+
+### 静态方法
+
+直接定义在类里面的方法都会被实例继承
+
+如果不希望实例继承某方法，就要写成静态方法
+
+```ts
+class Point {
+    constructor (x, y) {
+        this.x = x;
+        this.y = y
+    }
+    // 普通方法，可以被实例调用
+    getPosition () {
+        return `(${this.x}, ${this.y})`
+    }
+    // 静态方法，不能被实例调用
+    static getClassName () {
+        return Point.name
+    }
+}
+const p = new Point(1, 2)
+p.getPosition()         // (1, 2)
+p.getClassName()        // 报错
+Point.getClassName()    // Point
+```
+
+### 实例属性其他写法
+
+```ts
+class Point {
+    z = 0  // 定义属性并赋默认值
+    constructor (x, y) {
+        this.x = x;
+        this.y = y
+    }
+}
+
+class Point {
+    z  // 定义属性，并在构造函数中赋值
+    constructor (x, y, z) {
+        this.x = x;
+        this.y = y;
+        this.z = z
+    }
+}
+```
+
+#### 静态属性
+
+ES6标准中只支持静态方法，并不支持静态属性，可以采用一下写法
+
+```ts
+class Point {
+    constructor () {
+        this.x = 0
+    }
+}
+Point.y = 2
+const p = new Point()
+console.log(p.x)    // 0
+console.log(p.y)    // undefined
+```
+
+使用`static`关键字实现静态属性的提案目前还没通过
+
+### 实现私有方法与私有属性
+
+ES6同样不支持私有方法和私有属性
+
+#### 三种方法实现私有方法
+
+```ts
+// 使用命名区分
+class Point {
+    func () {}
+    _func () {}     // 以下划线开头表示这是一个私有方法
+}
+
+// 将私有方法移出模块
+const _func2 = () => {}
+class Point {
+    func1 () {
+        _func2.call(this)
+    }
+}
+
+// 利用Symbol的唯一性
+// a.js
+const func = Symbol('func')
+export default class Point {
+    static [func] () {
+        ...
+    }
+}
+// b.js
+import Point from './a.js'
+const p = new Point()
+```
+
+#### 私有属性
+
+有提案通过使用`#`定义私有属性，但还未通过
+
+```ts
+class Point {
+    #ownProp = ...
+}
+```
+
+### target
+
+可以实现限制某类不能实例化，只能通过子类实例化。
+
 ## 08. ES6精讲-类(基础)
 
 ## 09. TS中的类
