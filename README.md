@@ -897,7 +897,151 @@ class Point {
 
 可以实现限制某类不能实例化，只能通过子类实例化。
 
-## 08. ES6精讲-类(基础)
+## 08. ES6精讲-类(进阶)
+
+### ES5中的继承
+
+```ts
+function Food () {
+    this.type = 'food'
+}
+Food.prototype.getType = function () {
+    return this.type
+}
+function Vegetables (name) {
+    this.name = name
+}
+Vegetables.prototype = new Food()
+const tomato = new Vegetables('tomato')
+tomato.getType()  // food
+```
+
+### ES6中类的继承
+
+```ts
+class Parent {
+    constructor (name) {
+        this.name = name
+    }
+    getName () {
+        return this.name
+    }
+    static getNames () {
+        return this.name
+    }
+}
+class Child extends Parent {
+    constructor (name, age) {
+        super(name) // 必须调用，下文会介绍
+        this.age = age
+    }
+}
+const c = new Child('lison', 18)
+c  // {name: "lison", age: 18}
+c.getName()         // lison
+c instanceof Child  // true
+c instanceof Parent // true
+Child.getNames()    // Child
+Object.getPrototypeOf(Child) === Parent // true
+```
+
+### super
+
+#### 作为函数
+
+代表父类的constructor
+
+ES6规定**必须**在子类的`constructor`中调用super
+
+这样父类构造函数中的`this`会指向子类的实例
+
+#### 作为对象
+
+在普通方法中指向父类的原型对象
+
+在静态方法中指向父类
+
+```ts
+class Parent {
+    constructor () {
+        this.type = 'parent'
+    }
+    getName () {
+        return this.type
+    }
+}
+Parent.getType = () => {
+    return 'is parent'
+}
+class Child extends Parent {
+    constructor () {
+        super()
+        console.log('constructor: ' + super.getName())
+    }
+    getParentName () {
+        console.log('getParentName: ' + super.getName())
+    }
+    static getParentType () {
+        console.log('getParentType: ' + super.getType())
+    }
+}
+const c = new Child()   // constructor: parent
+c.getParentName()       // getParentName: parent
+Child.getParentType()   // getParentType: parent
+```
+
+```ts
+class Parent {
+    constructor () {
+        this.name = 'parent'
+    }
+    print () {
+        console.log(this.name)
+    }
+}
+class Child extends Parent {
+    constructor () {
+        super()
+        this.name = 'child'
+    }
+    childPrint () {
+        super.print()
+    }
+}
+const c = new Child()
+c.childPrint()  // child
+```
+
+### 类的prototype属性和__proto__属性
+
+- 子类的__proto__指向父类本身
+- 子类的prototype属性的__proto__指向父类的prototype属性
+- 实例的__proto__属性的__proto__指向父类实例的__proto__
+
+原生构造函数：
+- Boolean
+- Number
+- String
+- Array
+- Date
+- Function
+- RegExp
+- Error
+- Object
+
+ES5中原生构造函数不可继承，ES6中可以继承
+
+```ts
+class CustomArray extends Array {
+    constructor (...args) {
+        super(...args)
+    }
+}
+const arr = new CustomArray(3, 4, 5)
+// arr.fill('+')
+arr
+arr.join('_')
+```
 
 ## 09. TS中的类
 
