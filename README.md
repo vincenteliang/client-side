@@ -1045,6 +1045,228 @@ arr.join('_')
 
 ## 09. TS中的类
 
+### 基础
+
+```ts
+class Point {
+    x: number  // 报错
+    y: number  // 报错
+    constructor(x: number, y: number) {
+        this.x = x
+        this.y = y
+    }
+    getPosition() {  // 报错
+        return `(${this.x}, ${this.y})`
+    }
+}
+```
+
+保存时eslint会自动添加修饰符 public
+
+### 修饰符
+
+修饰符有三个
+- public
+- private
+- protected
+
+```ts
+class Parent {
+    // private age: number  // 不可访问
+    protected age: number   // 可以被子类访问，不能被super访问
+    // 给构造函数加入protected修饰符后只能通过其子类创建实例
+    protected constructor(age: number) {
+        this.age = age
+    }
+    protected getAge() {
+        return this.age
+    }
+}
+const p = new Parent(18)
+
+class Child extends Parent {
+    constructor(age: number) {
+        super(age)
+        // console.log(super.age)  // 报错
+        // console.log(super.getAge())  // 可以访问
+    }
+}
+const child = new Child(19)
+```
+
+### readonly修饰符
+
+将属性设置为只读
+
+```ts
+class UserInfo {
+    public readonly name: string
+    constructor(name: string) {
+        this.name = name
+    }
+}
+```
+
+### 参数属性
+
+```ts
+class A {
+    // 指定属性类型并将其挂载到实例上
+    constructor(public name: string) {}
+}
+```
+
+### 静态属性
+
+```ts
+class Parent {
+    public static getAge() {
+        return Parent.age
+    }
+    private static age: number = 18
+    constructor() {}
+}
+```
+
+### 可选类属性
+
+```ts
+class Info {
+    public name: string
+    public age?: number  // 可选属性
+    private _infoStr: string
+    constructor(name: string, age?: number, public sex?: string) {
+        this.name = name
+        this.age = age
+    }
+}
+const info1 = new Info('lison')
+// {name: "lison", age: undefined, sex: undefined}
+const info2 = new Info('lison', 18)
+// {name: "lison", age: 18       , sex: undefined}
+const info3 = new Info('lison', 18, 'man')
+// {name: "lison", age: 18       , sex: "man"    }
+```
+
+- `age`被显式将添加到实例上，未传入时即为`undefined`
+- `sex`通过静态属性添加，未传入时也为`undefined`
+
+### 存取器
+
+```ts
+class Info {
+    public name: string
+    public age?: number
+    private _infoStr: string  // 定义一个私有属性
+    constructor(name: string, age?: number, public sex?: string) {
+        this.name = name
+        this.age = age
+    }
+    // 取值器用于读取私有属性
+    get infoStr() {
+        return this._infoStr
+    }
+    // 存值器用于设置私有属性
+    set infoStr(value) {
+        this._infoStr = value
+    }
+}
+```
+
+### 抽象类
+
+抽象类不能创建实例
+
+```ts
+abstract class People {
+    constructor(public name: string) {}
+    public abstract printName(): void
+}
+
+class Man extends People {
+    constructor(name: string) {
+        super(name)
+        this.name = name
+    }
+    public printName() {
+        console.log(this.name)
+    }
+}
+const m = new Man('lison')
+m.printName()
+```
+
+TS2.0开始`abstract`关键字不仅可以标记类和方法，也可以标记类里面的存取器
+
+```ts
+abstract class People {
+    public abstract _name: string
+    abstract get insideName(): string
+    abstract set insideName(value: string)
+}
+class P extends People {
+    public _name: string
+    public insideName: string
+}
+```
+
+抽象类和抽象存取器不需要实现内容
+
+### 实例类型
+
+类既是值也是类型
+
+```ts
+class People {
+    constructor(public name: string) {}
+}
+let p2: People = new People('lison')
+class Animal {
+    constructor(public name: string) {}
+}
+p2 = new Animal('haha')  // 构造函数相同可以赋值
+```
+
+### 对前面跳过知识的补充
+
+**类类型接口**：使用接口可以强制类的定义必须包含某些内容
+
+```ts
+interface FoodInterface {
+    type: string
+}
+class FoodClass implements FoodInterface {
+    // public static type: string   // 报错，接口检测类定义的实例
+    public type: string
+}
+```
+
+接口继承类
+
+```ts
+class A {
+    protected name: string
+}
+interface I extends A {}
+// class B implements I {  // 报错，受保护属性只能又类或子类继承
+class B extends A implements I {
+    public name: string
+}
+```
+
+```ts
+const create = <T>(c: new() => T): T => {
+    return new c()
+}
+class Infos {
+    public age: number
+    constructor() {
+        this.age = 18
+    }
+}
+create<Infos>(Infos).age
+```
+
 ## 10. 枚举
 
 ## 11. 类型推论和兼容性
