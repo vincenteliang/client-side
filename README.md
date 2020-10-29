@@ -1269,6 +1269,125 @@ create<Infos>(Infos).age
 
 ## 10. 枚举
 
+### 数字枚举
+
+数字枚举在定义值的时候可以使用计算值/常量
+
+使用计算值/常量定义的字段的下一个字段必须设置初始值
+
+```ts
+const getIndex = () => {
+    return 2
+}
+enum Status {
+    Uploading,
+    Success = getIndex(),
+    Failed = 5,
+}
+Status.Uploading    // 0
+Status.['Success']  // 2
+Status.Failed       // 5
+```
+
+以上代码编译为JS后如下：
+
+```js
+var Status;
+(function (Status) {
+    Status[Status("Uploading"] = 0] = "Uploading";
+    Status[Status["Success"] = 2] = "Success";
+    Status[Status("Failed"] = 5] = "Failed";
+})(Status || (Status = {}));
+```
+
+### 反向映射
+
+```ts
+console.log(status)
+// {
+//     0: "Uploading"
+//     2: "Success"
+//     5: "Failed"
+//     Uploading: 0
+//     Success: 2
+//     Failed: 5
+// }
+```
+
+### 字符串枚举
+
+```ts
+enum Message {
+    Error = 'Sorry, error',
+    Success = 'Hoho, success',
+    Failed = Error,
+}
+console.log(Message.Failed) // Sorry, error'
+```
+
+### 异构枚举
+
+既包含数字值又包含字符串值，不建议使用
+
+```ts
+enum Result {
+    Faild = 0,
+    Success = 'success',
+}
+```
+
+### 枚举成员类型和联合枚举类型
+
+枚举成员全部符合一下某条规则：
+1. `enum E { A }`枚举成员不带初始值
+2. `enum E { A = 'a' }`值为字符串自变量
+3. `enum E { A = -1 }`值为数值自变量
+
+```ts
+enum Animals {
+    Dog = 1,
+    Cat = 2,
+}
+interface Dog {
+    type: Animals.Dog
+}
+const dog: Dog = {
+    type: Animals.Cat,
+}
+```
+
+```ts
+enum Status {
+    Off,
+    On,
+}
+interface Light {
+    status: Status
+}
+const light: Light = {
+    status: Status.On,  // 或Off
+}
+```
+
+### 运行时的枚举
+
+### const enum
+
+用于提高可读性，编译时会进行替换，不会生成新的对象
+
+```ts
+const enum Animals {
+    Dog = 1,
+}
+const dog = Animals.Dog
+```
+
+编译后：
+
+```js
+var dog = 1 /* Dog */;
+```
+
 ## 11. 类型推论和兼容性
 
 ## 12. 高级类型(1)
