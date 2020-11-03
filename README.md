@@ -1390,6 +1390,201 @@ var dog = 1 /* Dog */;
 
 ## 11. 类型推论和兼容性
 
+### 类型推论
+
+#### 基础
+
+```ts
+let name1 = 'lison'  // 推算出我们定义的是字符串类型
+name = 123  // 报错
+```
+
+#### 多类型联合
+
+```ts
+let arr5 = [1, 'a']
+arr5 = [2, 'b', false]  // 报错
+```
+
+#### 上下文类型
+
+```ts
+window.onmousedown = (event) => {
+    // 报错：根据上下文推断出没有a属性
+    console.log(event.a)
+}
+```
+
+### 类型兼容性
+
+#### 基础
+
+```ts
+interface InfoInterface {
+    name: string,
+    info: { age: number }
+}
+let info: InfoInterface
+const info1 = { name: 'lison', info: { age: 18 } }
+const info2 = { age: 18 }
+const info3 = { name: 'lison', age: 18 }
+info = info1
+info = info2  // 报错，不包含name属性
+info = info3  // 报错，不包含info属性
+```
+
+#### 函数兼容性
+
+##### 参数个数
+
+左边 >= 右边
+
+```ts
+let x = (a: number) => 0
+let y = (b: number, c: string) => 0
+y = x
+// x = y 报错
+```
+
+##### 参数类型
+
+```ts
+let x = (a: number) => 0
+let y = (b: string) => 0
+// x = y 报错，参数类型不对应
+```
+
+##### 可选参数和剩余参数
+
+```ts
+const getSum = (
+  arr: number[],
+  callback: (...args: number[]) => number,
+): number => {
+  return callback(...arr)
+}
+const res = getSum(
+  [1, 2, 3],  // 可以传任意个
+  (...args: number[]): number => args.reduce((a, b) => a + b, 0),
+)
+const res2 = getSum(
+  [1, 2, 3],  // 至少传三个，多余无用
+  (arg1: number, arg2: number, arg3: number): number => arg1 + arg2 + arg3,
+)
+```
+
+##### 参数双向协变
+
+```ts
+let funcA = (arg: number | string): void => {}
+let funcB = (arg: number): void => {}
+// 可以双向赋值
+funcA = funcB
+funcB = funcA
+```
+
+##### 返回值类型
+
+```ts
+let x = (): string | number => 0
+let y = (): string => 'a'
+let z = (): boolean => false
+x = y
+// y = x 报错
+// y = z 报错
+```
+
+##### 函数重载
+
+```ts
+// 函数重载
+function merge(arg1: number, arg2: number): number
+function merge(arg1: string, arg2: string): string
+// 函数体
+function merge(arg1: any, arg2: any) {
+    return arg1 + arg2
+}
+
+function sum(arg1: number, arg2: number): number
+function sum(arg1: any, arg2: any): any {
+    return arg1 + arg2
+}
+let func = merge
+// func = sum 报错，缺少一种重载
+```
+
+#### 枚举
+
+```ts
+enum Status {
+    On,
+    Off,
+}
+enum Animal {
+    Dog,
+    Cat,
+}
+let s = Status.On
+s = 1  // 可以通过
+// s = Animal.Dog 不同的枚举不兼容
+```
+
+#### 类
+
+比较类的类型兼容性时只比较实例成员
+
+类的静态成员和构造函数不进行比较
+
+```ts
+class Animal {
+    public static age: number
+    constructor(public name: string) {}
+}
+class People {
+    public static age: string
+    constructor(public name: string) {}
+}
+class Food {
+    constructor(public name: number) {}
+}
+let animal: Animal
+let people: People
+let food: Food
+animal = people
+// animal = food 报错
+```
+
+`private`和`protected`成员会对兼容性造成影响
+
+```ts
+class ParentClass {
+    protected age: number
+    constructor() {}
+}
+class ChildrenClass extends ParentClass {
+    constructor() {
+        super()
+    }
+}
+class OtherClass {
+    protected age: number
+    constructor() {}
+}
+const children: ParentClass = new ChildrenClass()
+// const other: ParentClass = new OtherClass() 报错
+```
+
+#### 泛型
+
+```ts
+interface Data<T> {
+    data: T
+}
+let data1: Data<number>
+let data2: Data<string>
+// data1 = data2
+```
+
 ## 12. 高级类型(1)
 
 ## 13. 高级类型(2)
